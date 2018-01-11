@@ -20,6 +20,9 @@ public class FleetManager {
                 newShips.put(ship.getId(), ship);
             }
         }
+    }
+
+    public void assignTasksForShips() {
 
     }
 

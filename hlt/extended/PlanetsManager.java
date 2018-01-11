@@ -15,8 +15,6 @@ public class PlanetsManager {
     private Integer numberOfMyPlanets;
     private Integer numberOfEnemyPlanets;
 
-
-
     private Integer playerId;
 
     public Map<Integer, Planet> getMyPlanets() {

@@ -48,6 +48,7 @@ public class MyBot {
             List<Ship> ships = new ArrayList<>(gameMap.getMyPlayer().getShips().values());
             fleetManager.checkShipAndAddToNewShipsIfNotRegistered(ships);
 
+            fleetManager.assignTasksForShips();
 
             for (final Ship ship : gameMap.getMyPlayer().getShips().values()) {
                 if (ship.getDockingStatus() != Ship.DockingStatus.Undocked) {
