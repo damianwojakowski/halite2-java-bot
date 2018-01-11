@@ -1,32 +1,62 @@
 import hlt.*;
+import hlt.extended.FleetManager;
+import hlt.extended.PlanetsManager;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class MyBot {
 
     public static void main(final String[] args) {
         final Networking networking = new Networking();
         final GameMap gameMap = networking.initialize("Damiano v0.0.1");
+        final FleetManager fleetManager = new FleetManager();
+        final PlanetsManager planetsManager = new PlanetsManager();
 
-        // We now have 1 full minute to analyse the initial map.
+        planetsManager.setPlayerId(gameMap.getMyPlayerId());
+
+
+        // iterate over ships and look for new ones (with no jobs)
+        // assign new jobs to free ships
+            // iterate plantes
+                // are any free?
+                // are yours with free docking spots?
+                    // assign closest free ships to them
+
+        // if all planets occupied
+            // start war (attack enemy ships and planets)
+
+
+
         final String initialMapIntelligence =
                 "width: " + gameMap.getWidth() +
                 "; height: " + gameMap.getHeight() +
                 "; players: " + gameMap.getAllPlayers().size() +
                 "; planets: " + gameMap.getAllPlanets().size();
-        Log.log(initialMapIntelligence);
+        //Log.log(initialMapIntelligence);
 
         final ArrayList<Move> moveList = new ArrayList<>();
+
+
+
         for (;;) {
             moveList.clear();
             networking.updateMap(gameMap);
+
+            List<Ship> ships = new ArrayList<>(gameMap.getMyPlayer().getShips().values());
+            fleetManager.checkShipAndAddToNewShipsIfNotRegistered(ships);
+
+            List<Planet> planets = new ArrayList<>(gameMap.getAllPlanets().values());
+            planetsManager.updatePlanetsStatus(planets);
+
 
             for (final Ship ship : gameMap.getMyPlayer().getShips().values()) {
                 if (ship.getDockingStatus() != Ship.DockingStatus.Undocked) {
                     continue;
                 }
 
+
                 for (final Planet planet : gameMap.getAllPlanets().values()) {
+
                     if (planet.isOwned()) {
                         continue;
                     }
