@@ -1,5 +1,6 @@
 import hlt.*;
 import hlt.extended.FleetManager;
+import hlt.extended.Orders;
 import hlt.extended.PlanetsManager;
 
 import java.util.*;
@@ -11,21 +12,12 @@ public class MyBot {
         final GameMap gameMap = networking.initialize("Damiano v0.1.0");
         final FleetManager fleetManager = new FleetManager();
         final PlanetsManager planetsManager = new PlanetsManager();
+        final Orders orders = new Orders();
 
         planetsManager.setPlayerId(gameMap.getMyPlayerId());
 
-
-        // iterate over ships and look for new ones (with no jobs)
-        // assign new jobs to free ships
-            // iterate plantes
-                // are any free?
-                // are yours with free docking spots?
-                    // assign closest free ships to them
-
-        // if all planets occupied
-            // start war (attack enemy ships and planets)
-
-
+        fleetManager.setPlanetsManager(planetsManager);
+        fleetManager.setOrders(orders);
 
         final String initialMapIntelligence =
                 "width: " + gameMap.getWidth() +
@@ -47,7 +39,6 @@ public class MyBot {
 
             List<Ship> ships = new ArrayList<>(gameMap.getMyPlayer().getShips().values());
             fleetManager.checkShipAndAddToNewShipsIfNotRegistered(ships);
-
             fleetManager.assignTasksForShips();
 
             for (final Ship ship : gameMap.getMyPlayer().getShips().values()) {

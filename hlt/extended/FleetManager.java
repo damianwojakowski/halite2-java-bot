@@ -1,12 +1,16 @@
 package hlt.extended;
 
+import hlt.Planet;
 import hlt.Ship;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class FleetManager {
+    Orders orders;
+    PlanetsManager planetsManager;
     Map<Integer, Ship> allShips = new HashMap<>();
     Map<Integer, Ship> miningShips = new HashMap<>();
     Map<Integer, Ship> dockingShips = new HashMap<>();
@@ -23,7 +27,32 @@ public class FleetManager {
     }
 
     public void assignTasksForShips() {
+        if (planetsManager.areFreePlanets()) {
+            assignTasksToDockPlanets();
+        }
 
+        // iterate over ships and look for new ones (with no jobs)
+        // assign new jobs to free ships
+        // iterate plantes
+            // are any free?
+                // are yours with free docking spots?
+                // assign closest free ships to them
+
+        // if all planets occupied
+            // start war (attack enemy ships and planets)
     }
 
+    private void assignTasksToDockPlanets() {
+        for (Planet freePlanet : new ArrayList<Planet>(planetsManager.getFreePlanets().values())) {
+
+        }
+    }
+
+    public void setPlanetsManager(PlanetsManager planetsManager) {
+        this.planetsManager = planetsManager;
+    }
+
+    public void setOrders(Orders orders) {
+        this.orders = orders;
+    }
 }

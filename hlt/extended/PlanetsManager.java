@@ -14,6 +14,7 @@ public class PlanetsManager {
     private Integer numberOfAllPlanets;
     private Integer numberOfMyPlanets;
     private Integer numberOfEnemyPlanets;
+    private Integer numberOfFreePlanets;
 
     private Integer playerId;
 
@@ -53,5 +54,9 @@ public class PlanetsManager {
         numberOfAllPlanets = planetsList.size();
         numberOfEnemyPlanets = enemyPlanets.size();
         numberOfMyPlanets = myPlanets.size();
+    }
+
+    public boolean areFreePlanets() {
+        return numberOfFreePlanets > 0;
     }
 }
