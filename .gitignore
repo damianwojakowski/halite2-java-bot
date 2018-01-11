@@ -2,4 +2,4 @@
 *.class
 *zip
 *log
-*hlt
+*.hlt
