@@ -59,4 +59,8 @@ public class PlanetsManager {
     public boolean areFreePlanets() {
         return numberOfFreePlanets > 0;
     }
+
+    public boolean areMyPlanetsFull() {
+        return false;
+    }
 }

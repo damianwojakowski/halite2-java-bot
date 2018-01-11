@@ -31,15 +31,12 @@ public class FleetManager {
             assignTasksToDockPlanets();
         }
 
-        // iterate over ships and look for new ones (with no jobs)
-        // assign new jobs to free ships
-        // iterate plantes
-            // are any free?
-                // are yours with free docking spots?
-                // assign closest free ships to them
+        if (planetsManager.areMyPlanetsFull()) {
+            assignTasksToAttackEnemies();
+        }
+    }
 
-        // if all planets occupied
-            // start war (attack enemy ships and planets)
+    private void assignTasksToAttackEnemies() {
     }
 
     private void assignTasksToDockPlanets() {
