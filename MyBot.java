@@ -8,7 +8,7 @@ public class MyBot {
 
     public static void main(final String[] args) {
         final Networking networking = new Networking();
-        final GameMap gameMap = networking.initialize("Damiano v0.0.1");
+        final GameMap gameMap = networking.initialize("Damiano v0.1.0");
         final FleetManager fleetManager = new FleetManager();
         final PlanetsManager planetsManager = new PlanetsManager();
 
@@ -42,11 +42,11 @@ public class MyBot {
             moveList.clear();
             networking.updateMap(gameMap);
 
-            List<Ship> ships = new ArrayList<>(gameMap.getMyPlayer().getShips().values());
-            fleetManager.checkShipAndAddToNewShipsIfNotRegistered(ships);
-
             List<Planet> planets = new ArrayList<>(gameMap.getAllPlanets().values());
             planetsManager.updatePlanetsStatus(planets);
+
+            List<Ship> ships = new ArrayList<>(gameMap.getMyPlayer().getShips().values());
+            fleetManager.checkShipAndAddToNewShipsIfNotRegistered(ships);
 
 
             for (final Ship ship : gameMap.getMyPlayer().getShips().values()) {
