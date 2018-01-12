@@ -81,4 +81,8 @@ public class PlanetsManager {
     public Planet getPlanetById(Integer planetId) {
         return allPlanets.get(planetId);
     }
+
+    public boolean notAllMyPlanetsAreFull() {
+        return !areMyPlanetsFull();
+    }
 }

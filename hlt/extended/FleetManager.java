@@ -56,8 +56,41 @@ public class FleetManager {
             assignTasksToDockPlanets();
         }
 
+        if (planetsManager.notAllMyPlanetsAreFull()) {
+            assignTasksToSupportYourPlanets();
+        }
+
         if (planetsManager.areMyPlanetsFull()) {
             assignTasksToAttackEnemies();
+        }
+    }
+
+    private void assignTasksToSupportYourPlanets() {
+        List<Integer> updatedShipsToBeRemoved = new ArrayList<>();
+
+        for (Planet myPlanet : new ArrayList<Planet>(planetsManager.getMyPlanets().values())) {
+            if (!myPlanet.isFull()) {
+                int leftDocksOnPlanet = myPlanet.getDockingSpots() - myPlanet.getDockedShips().size();
+                int assignedShipsCounter = 0;
+
+                for (Integer freeShipId : freeShipsList) {
+                    if (assignedShipsCounter >= leftDocksOnPlanet) {
+                        break;
+                    }
+
+                    if (!updatedShipsToBeRemoved.contains(freeShipId)) {
+                        orders.serOrderToDockPlanet(myPlanet.getId(), freeShipId);
+                        dockingShipsList.add(freeShipId);
+                        updatedShipsToBeRemoved.add(freeShipId);
+                        assignedShipsCounter++;
+                    }
+                }
+            }
+        }
+        for (Integer updatedShipId : updatedShipsToBeRemoved) {
+            if (freeShipsList.contains(updatedShipId)) {
+                freeShipsList.remove(updatedShipId);
+            }
         }
     }
 
@@ -66,28 +99,26 @@ public class FleetManager {
 
     private void assignTasksToDockPlanets() {
         Log.log("assignTasksToDockPlanets");
-        int shipsPerPlanet = 1;
-        List<Integer> updated = new ArrayList<>();
+        int shipsPerPlanet = 2;
+        List<Integer> updatedShipsToBeRemoved = new ArrayList<>();
         for (Planet freePlanet : new ArrayList<Planet>(planetsManager.getFreePlanets().values())) {
             int shipsCounter = 0;
 
             for (Integer freeShipId : freeShipsList) {
-                Log.log("* FREE SHIP");
-                Log.log("free ship id: " + freeShipId.toString());
-                if (shipsCounter > shipsPerPlanet) {
+                if (shipsCounter >= shipsPerPlanet) {
                     break;
                 }
 
-                if (!updated.contains(freeShipId)) {
+                if (!updatedShipsToBeRemoved.contains(freeShipId)) {
                     orders.serOrderToDockPlanet(freePlanet.getId(), freeShipId);
                     dockingShipsList.add(freeShipId);
-                    updated.add(freeShipId);
+                    updatedShipsToBeRemoved.add(freeShipId);
                     shipsCounter++;
                 }
             }
         }
 
-        for (Integer updatedShipId : updated) {
+        for (Integer updatedShipId : updatedShipsToBeRemoved) {
             if (freeShipsList.contains(updatedShipId)) {
                 freeShipsList.remove(updatedShipId);
             }
