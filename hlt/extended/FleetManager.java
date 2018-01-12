@@ -22,6 +22,7 @@ public class FleetManager {
 
     private List<Integer> freeShipsList = new ArrayList<>();
     private List<Integer> dockingShipsList = new ArrayList<>();
+    private List<Integer> sortedPlanetsList = new ArrayList<>();
 
     public void setPlanetsManager(PlanetsManager planetsManager) {
         this.planetsManager = planetsManager;
@@ -125,11 +126,42 @@ public class FleetManager {
         freeShipsList.removeAll(updatedShipsToBeRemoved);
     }
 
+    List<Integer> getSortedPlanetsOrder(Map<Integer, Planet> planets) {
+        if (sortedPlanetsList.size() > 0) {
+            return sortedPlanetsList;
+        } else {
+            List<Integer> sortedPlanets = new ArrayList<>();
+            Ship firstFreeShip = allShips.get(freeShipsList.get(0));
+            Map<Double, Entity> closestEntities = gameMap.nearbyEntitiesByDistance(firstFreeShip);
+
+            for (Entity entity : closestEntities.values()) {
+                if (planets.containsKey(entity.getId())) {
+                    sortedPlanetsList.add(entity.getId());
+                }
+            }
+            return sortedPlanetsList;
+        }
+    }
+
+    private List<Planet> getNearestPlanets() {
+        Map<Integer, Planet> planets = planetsManager.getFreePlanets();
+        List<Planet> sortedPlanets = new ArrayList<>();
+        List<Integer> sortedPlanetsList = getSortedPlanetsOrder(planets);
+
+        for (Integer planetId : sortedPlanetsList) {
+            sortedPlanets.add(gameMap.getPlanet(planetId));
+        }
+
+        Log.log("Planets: " + sortedPlanets.size());
+        return sortedPlanets;
+    }
+
     private void assignTasksToDockPlanets() {
         Log.log("assignTasksToDockPlanets");
         int shipsPerPlanet = 2;
         List<Integer> updatedShipsToBeRemoved = new ArrayList<>();
-        for (Planet freePlanet : new ArrayList<Planet>(planetsManager.getFreePlanets().values())) {
+
+        for (Planet freePlanet : getNearestPlanets()) {
             int shipsCounter = 0;
 
             for (Integer freeShipId : freeShipsList) {
