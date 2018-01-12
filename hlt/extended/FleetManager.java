@@ -104,6 +104,10 @@ public class FleetManager {
                     Ship ship = allShips.get(singleOrder.getShipId());
                     Planet planet = planetsManager.getPlanetById(singleOrder.getPlanetId());
 
+                    if (planet.isFull()) {
+                        singleOrder.reset();
+                    }
+
                     if (ship.canDock(planet)) {
                         moveList.add(new DockMove(ship, planet));
                         break;
@@ -117,6 +121,8 @@ public class FleetManager {
                     break;
             }
         }
+
+        this.orders.removeCompletedOrders();
 
         return moveList;
     }

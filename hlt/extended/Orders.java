@@ -36,4 +36,16 @@ public class Orders {
         }
         return false;
     }
+
+    public void removeCompletedOrders() {
+        List<SingleOrder> ordersToBeRemoved = new ArrayList<>();
+
+        for (SingleOrder singleOrder : orders) {
+            if (singleOrder.getOrderType() == SingleOrder.TO_BE_REMOVED) {
+                ordersToBeRemoved.add(singleOrder);
+            }
+        }
+
+        orders.removeAll(ordersToBeRemoved);
+    }
 }
