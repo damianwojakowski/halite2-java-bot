@@ -9,10 +9,13 @@ public class SingleOrder {
     private int planetId;
     private int shipId;
     private int orderType;
+    private int enemyShipId;
 
     public int getShipId() {
         return shipId;
     }
+
+    public int getEnemyShipId() { return enemyShipId; }
 
     public int getPlanetId() {
         return planetId;
@@ -36,5 +39,11 @@ public class SingleOrder {
         planetId = -1;
         shipId = -1;
         orderType = TO_BE_REMOVED;
+    }
+
+    public void setOrderToAttackEnemyShip(int enemyShipId, Integer freeShipId) {
+        this.enemyShipId = enemyShipId;
+        this.shipId = freeShipId;
+        this.orderType = ATTACK_SHIP;
     }
 }

@@ -14,6 +14,10 @@ public class MyBot {
         final PlanetsManager planetsManager = new PlanetsManager();
         final Orders orders = new Orders();
 
+        orders.setPlanetsManager(planetsManager);
+        orders.setPlayerId(gameMap.getMyPlayerId());
+        orders.setGameMap(gameMap);
+
         planetsManager.setPlayerId(gameMap.getMyPlayerId());
 
         fleetManager.setPlanetsManager(planetsManager);
@@ -33,10 +37,14 @@ public class MyBot {
             List<Planet> planets = new ArrayList<>(gameMap.getAllPlanets().values());
             planetsManager.updatePlanetsStatus(planets);
 
-            List<Ship> ships = new ArrayList<>(gameMap.getMyPlayer().getShips().values());
-            fleetManager.checkShipAndAddToNewShipsIfNotRegistered(ships);
+            List<Ship> allShips = new ArrayList<>(gameMap.getAllShips());
+            fleetManager.setAllShipsWithEnemyShips(allShips);
+
+            List<Ship> myShips = new ArrayList<>(gameMap.getMyPlayer().getShips().values());
+            fleetManager.checkShipAndAddToNewShipsIfNotRegistered(myShips);
             fleetManager.assignOrdersForShips();
             ArrayList<Move> moveList = fleetManager.generateMoveList();
+
             Networking.sendMoves(moveList);
         }
     }

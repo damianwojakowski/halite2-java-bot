@@ -13,6 +13,7 @@ public class FleetManager {
     private GameMap gameMap;
     private Orders orders;
     private PlanetsManager planetsManager;
+    private Map<Integer, Ship> allShipsWithEnemyShips = new HashMap<>();
     private Map<Integer, Ship> allShips = new HashMap<>();
     private Map<Integer, Ship> miningShips = new HashMap<>();
     private Map<Integer, Ship> dockingShips = new HashMap<>();
@@ -30,6 +31,12 @@ public class FleetManager {
         this.orders = orders;
     }
 
+    public void setAllShipsWithEnemyShips(List<Ship> ships) {
+        for (Ship ship : ships) {
+            allShipsWithEnemyShips.put(ship.getId(), ship);
+        }
+    }
+
     public void checkShipAndAddToNewShipsIfNotRegistered(List<Ship> ships) {
         freeShipsList.clear();
 
@@ -45,7 +52,6 @@ public class FleetManager {
 
     public void assignOrdersForShips() {
         Log.log("* ORDERS: " + orders.getOrders().toString());
-
         Log.log("Ships: " + allShips.values().toString());
 
         //TODO: check if ships finished their task
@@ -95,6 +101,32 @@ public class FleetManager {
     }
 
     private void assignTasksToAttackEnemies() {
+        List<Integer> updatedShipsToBeRemoved = new ArrayList<>();
+        int assignedShipsCounter = 0;
+        int myShipsPerEnemy = 5;
+
+        for (Ship enemyShip : gameMap.getAllShips()) {
+            if (updatedShipsToBeRemoved.size() >= freeShipsList.size()) {
+                break;
+            }
+
+            if (enemyShip.getOwner() != gameMap.getMyPlayerId()) {
+                for (Integer freeShipId : freeShipsList) {
+                    if (assignedShipsCounter >= myShipsPerEnemy) {
+                        break;
+                    }
+
+                    if (!updatedShipsToBeRemoved.contains(freeShipId)) {
+                        orders.serOrderToAttackShip(enemyShip.getId(), freeShipId);
+                        dockingShipsList.add(freeShipId);
+                        updatedShipsToBeRemoved.add(freeShipId);
+                        assignedShipsCounter++;
+                    }
+                }
+            }
+        }
+
+        freeShipsList.removeAll(updatedShipsToBeRemoved);
     }
 
     private void assignTasksToDockPlanets() {
@@ -118,11 +150,7 @@ public class FleetManager {
             }
         }
 
-        for (Integer updatedShipId : updatedShipsToBeRemoved) {
-            if (freeShipsList.contains(updatedShipId)) {
-                freeShipsList.remove(updatedShipId);
-            }
-        }
+        freeShipsList.removeAll(updatedShipsToBeRemoved);
     }
 
     public ArrayList<Move> generateMoveList() {
@@ -148,11 +176,20 @@ public class FleetManager {
                     if (newThrustMove != null) {
                         moveList.add(newThrustMove);
                     }
+                    break;
+                case SingleOrder.ATTACK_SHIP:
+                    Ship attackingShip = allShips.get(singleOrder.getShipId());
+                    Ship enemyShip = allShipsWithEnemyShips.get(singleOrder.getEnemyShipId());
 
+                    final ThrustMove attackMove = Navigation.navigateShipToDock(gameMap, attackingShip, enemyShip, Constants.MAX_SPEED);
+                    if (attackMove != null) {
+                        moveList.add(attackMove);
+                    }
                     break;
             }
         }
 
+        this.orders.validateOrders();
         this.orders.removeCompletedOrders();
 
         return moveList;
