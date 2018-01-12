@@ -9,16 +9,19 @@ import java.util.List;
 import java.util.Map;
 
 public class PlanetsManager {
+    private Map<Integer, Planet> allPlanets = new HashMap<>();
     private Map<Integer, Planet> myPlanets = new HashMap<>();
     private Map<Integer, Planet> enemyPlanets = new HashMap<>();
     private Map<Integer, Planet> freePlanets = new HashMap<>();
 
-    private Integer numberOfAllPlanets;
-    private Integer numberOfMyPlanets;
-    private Integer numberOfEnemyPlanets;
-    private Integer numberOfFreePlanets;
+    private Integer numberOfAllPlanets = 0;
+    private Integer numberOfMyPlanets = 0;
+    private Integer numberOfEnemyPlanets = 0;
+    private Integer numberOfFreePlanets = 0;
 
     private Integer playerId;
+
+    public Map<Integer, Planet> getAllPlanets() { return allPlanets; }
 
     public Map<Integer, Planet> getMyPlanets() {
         return this.myPlanets;
@@ -42,6 +45,7 @@ public class PlanetsManager {
         freePlanets.clear();
 
         for (Planet planet : planetsList) {
+            allPlanets.put(planet.getId(), planet);
             if (planet.isOwned()) {
                 if (planet.getOwner() == this.playerId) {
                     myPlanets.put(planet.getId(), planet);
@@ -53,14 +57,13 @@ public class PlanetsManager {
             }
         }
 
-        numberOfAllPlanets = planetsList.size();
+        numberOfAllPlanets = allPlanets.size();
         numberOfEnemyPlanets = enemyPlanets.size();
         numberOfMyPlanets = myPlanets.size();
         numberOfFreePlanets = freePlanets.size();
     }
 
     public boolean areFreePlanets() {
-        Log.log("PlanetsManager.areFreePlanets");
         return numberOfFreePlanets > 0;
     }
 
@@ -73,5 +76,9 @@ public class PlanetsManager {
         }
 
         return fullPlanets == this.numberOfMyPlanets;
+    }
+
+    public Planet getPlanetById(Integer planetId) {
+        return allPlanets.get(planetId);
     }
 }

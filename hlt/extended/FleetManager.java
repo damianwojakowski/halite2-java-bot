@@ -19,6 +19,9 @@ public class FleetManager {
     private Map<Integer, Ship> warriorShips = new HashMap<>();
     private Map<Integer, Ship> freeShip = new HashMap<>();
 
+    private List<Integer> freeShipsList = new ArrayList<>();
+    private List<Integer> dockingShipsList = new ArrayList<>();
+
     public void setPlanetsManager(PlanetsManager planetsManager) {
         this.planetsManager = planetsManager;
     }
@@ -28,27 +31,32 @@ public class FleetManager {
     }
 
     public void checkShipAndAddToNewShipsIfNotRegistered(List<Ship> ships) {
+        freeShipsList.clear();
+
         for (Ship ship : ships) {
-            if (!allShips.containsKey(ship.getId())) {
-                allShips.put(ship.getId(), ship);
-                freeShip.put(ship.getId(), ship);
+            if (!orders.areOrdersSetForShip(ship.getId())) {
+                Log.log("Add free ship: " + ship.getId());
+                freeShipsList.add(ship.getId());
             }
+
+            allShips.put(ship.getId(), ship);
         }
     }
 
     public void assignOrdersForShips() {
-        Log.log("assignOrdersForShips");
+        Log.log("* ORDERS: " + orders.getOrders().toString());
+
+        Log.log("Ships: " + allShips.values().toString());
+
         //TODO: check if ships finished their task
             // assign to free ships if done
             // assign to warrior ships if no free planets
 
         if (planetsManager.areFreePlanets()) {
-            Log.log("areFreePlanets");
             assignTasksToDockPlanets();
         }
 
         if (planetsManager.areMyPlanetsFull()) {
-            Log.log("areMyPlanetsFull");
             assignTasksToAttackEnemies();
         }
     }
@@ -58,30 +66,43 @@ public class FleetManager {
 
     private void assignTasksToDockPlanets() {
         Log.log("assignTasksToDockPlanets");
-        int shipsPerPlanet = 3;
+        int shipsPerPlanet = 1;
+        List<Integer> updated = new ArrayList<>();
         for (Planet freePlanet : new ArrayList<Planet>(planetsManager.getFreePlanets().values())) {
             int shipsCounter = 0;
 
-            for (Ship newShip : new ArrayList<Ship>(freeShip.values())) {
+            for (Integer freeShipId : freeShipsList) {
+                Log.log("* FREE SHIP");
+                Log.log("free ship id: " + freeShipId.toString());
                 if (shipsCounter > shipsPerPlanet) {
                     break;
                 }
 
-                orders.serOrderToDockPlanet(freePlanet.getId(), newShip.getId());
+                if (!updated.contains(freeShipId)) {
+                    orders.serOrderToDockPlanet(freePlanet.getId(), freeShipId);
+                    dockingShipsList.add(freeShipId);
+                    updated.add(freeShipId);
+                    shipsCounter++;
+                }
+            }
+        }
 
-                shipsCounter++;
+        for (Integer updatedShipId : updated) {
+            if (freeShipsList.contains(updatedShipId)) {
+                freeShipsList.remove(updatedShipId);
             }
         }
     }
 
     public ArrayList<Move> generateMoveList() {
         moveList.clear();
+        Log.log(moveList.toString());
 
         for (SingleOrder singleOrder : this.orders.getOrders()) {
             switch (singleOrder.getOrderType()) {
                 case SingleOrder.DOCK_PLANET:
                     Ship ship = allShips.get(singleOrder.getShipId());
-                    Planet planet = gameMap.getPlanet(singleOrder.getPlanetId());
+                    Planet planet = planetsManager.getPlanetById(singleOrder.getPlanetId());
 
                     if (ship.canDock(planet)) {
                         moveList.add(new DockMove(ship, planet));

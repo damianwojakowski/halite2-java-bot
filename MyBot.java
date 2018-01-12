@@ -35,15 +35,8 @@ public class MyBot {
 
             List<Ship> ships = new ArrayList<>(gameMap.getMyPlayer().getShips().values());
             fleetManager.checkShipAndAddToNewShipsIfNotRegistered(ships);
-
-            Log.log("Ships and Planets Added...");
-
-            Log.log("Assigning orders...");
             fleetManager.assignOrdersForShips();
-            Log.log("Orders assigned...");
-
             ArrayList<Move> moveList = fleetManager.generateMoveList();
-
             Networking.sendMoves(moveList);
         }
     }

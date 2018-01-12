@@ -1,10 +1,11 @@
 package hlt.extended;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Orders {
 
-    private List<SingleOrder> orders;
+    private List<SingleOrder> orders = new ArrayList<>();
 
     public boolean areOrdersSetForPlanet(Integer planetId) {
         final boolean[] hasOrderForPlanetId = {false};
@@ -24,5 +25,15 @@ public class Orders {
     public void serOrderToDockPlanet(int planetId, int shipId) {
         SingleOrder singleOrder = new SingleOrder();
         singleOrder.setOrderToDockPlanet(planetId, shipId);
+        orders.add(singleOrder);
+    }
+
+    public boolean areOrdersSetForShip(int shipId) {
+        for (SingleOrder singleOrder : orders) {
+            if (singleOrder.getShipId() == shipId) {
+                return true;
+            }
+        }
+        return false;
     }
 }
