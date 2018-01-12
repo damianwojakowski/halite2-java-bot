@@ -100,9 +100,10 @@ public class FleetManager {
     private void assignTasksToAttackEnemies() {
         List<Integer> updatedShipsToBeRemoved = new ArrayList<>();
         int assignedShipsCounter = 0;
-        int myShipsPerEnemy = 10;
+        int myShipsPerEnemy = 7;
 
         for (Ship enemyShip : gameMap.getAllShips()) {
+            assignedShipsCounter = 0;
             if (updatedShipsToBeRemoved.size() >= freeShipsList.size()) {
                 break;
             }
