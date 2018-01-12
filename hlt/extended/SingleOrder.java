@@ -9,6 +9,18 @@ public class SingleOrder {
     private int shipId;
     private int orderType;
 
+    public int getShipId() {
+        return shipId;
+    }
+
+    public int getPlanetId() {
+        return planetId;
+    }
+
+    public int getOrderType() {
+        return orderType;
+    }
+
     public boolean hasOrderForPlanetId(int planetId) {
         return this.planetId == planetId;
     }

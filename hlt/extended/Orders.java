@@ -17,6 +17,10 @@ public class Orders {
         return hasOrderForPlanetId[0];
     }
 
+    public List<SingleOrder> getOrders() {
+        return this.orders;
+    }
+
     public void serOrderToDockPlanet(int planetId, int shipId) {
         SingleOrder singleOrder = new SingleOrder();
         singleOrder.setOrderToDockPlanet(planetId, shipId);

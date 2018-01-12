@@ -1,7 +1,6 @@
 package hlt.extended;
 
-import hlt.Planet;
-import hlt.Ship;
+import hlt.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 public class FleetManager {
+    final ArrayList<Move> moveList = new ArrayList<>();
+
+    private GameMap gameMap;
     private Orders orders;
     private PlanetsManager planetsManager;
     private Map<Integer, Ship> allShips = new HashMap<>();
@@ -34,7 +36,7 @@ public class FleetManager {
         }
     }
 
-    public void assignTasksForShips() {
+    public void assignOrdersForShips() {
         //TODO: check if ships finished their task
             // assign to free ships if done
             // assign to warrior ships if no free planets
@@ -66,5 +68,35 @@ public class FleetManager {
                 shipsCounter++;
             }
         }
+    }
+
+    public ArrayList<Move> generateMoveList() {
+        moveList.clear();
+
+        for (SingleOrder singleOrder : this.orders.getOrders()) {
+            switch (singleOrder.getOrderType()) {
+                case SingleOrder.DOCK_PLANET:
+                    Ship ship = allShips.get(singleOrder.getShipId());
+                    Planet planet = gameMap.getPlanet(singleOrder.getPlanetId());
+
+                    if (ship.canDock(planet)) {
+                        moveList.add(new DockMove(ship, planet));
+                        break;
+                    }
+
+                    final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
+                    if (newThrustMove != null) {
+                        moveList.add(newThrustMove);
+                    }
+
+                    break;
+            }
+        }
+
+        return moveList;
+    }
+
+    public void setGameMap(GameMap gameMap) {
+        this.gameMap = gameMap;
     }
 }
