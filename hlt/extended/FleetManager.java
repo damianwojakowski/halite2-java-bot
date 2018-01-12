@@ -37,15 +37,18 @@ public class FleetManager {
     }
 
     public void assignOrdersForShips() {
+        Log.log("assignOrdersForShips");
         //TODO: check if ships finished their task
             // assign to free ships if done
             // assign to warrior ships if no free planets
 
         if (planetsManager.areFreePlanets()) {
+            Log.log("areFreePlanets");
             assignTasksToDockPlanets();
         }
 
         if (planetsManager.areMyPlanetsFull()) {
+            Log.log("areMyPlanetsFull");
             assignTasksToAttackEnemies();
         }
     }
@@ -54,6 +57,7 @@ public class FleetManager {
     }
 
     private void assignTasksToDockPlanets() {
+        Log.log("assignTasksToDockPlanets");
         int shipsPerPlanet = 3;
         for (Planet freePlanet : new ArrayList<Planet>(planetsManager.getFreePlanets().values())) {
             int shipsCounter = 0;

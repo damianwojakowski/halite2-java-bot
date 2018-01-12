@@ -1,5 +1,6 @@
 package hlt.extended;
 
+import hlt.Log;
 import hlt.Planet;
 
 import java.util.ArrayList;
@@ -55,9 +56,11 @@ public class PlanetsManager {
         numberOfAllPlanets = planetsList.size();
         numberOfEnemyPlanets = enemyPlanets.size();
         numberOfMyPlanets = myPlanets.size();
+        numberOfFreePlanets = freePlanets.size();
     }
 
     public boolean areFreePlanets() {
+        Log.log("PlanetsManager.areFreePlanets");
         return numberOfFreePlanets > 0;
     }
 
