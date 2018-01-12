@@ -100,7 +100,7 @@ public class FleetManager {
     private void assignTasksToAttackEnemies() {
         List<Integer> updatedShipsToBeRemoved = new ArrayList<>();
         int assignedShipsCounter = 0;
-        int myShipsPerEnemy = 5;
+        int myShipsPerEnemy = 7;
 
         for (Ship enemyShip : gameMap.getAllShips()) {
             assignedShipsCounter = 0;
@@ -159,7 +159,7 @@ public class FleetManager {
 
     private void assignTasksToDockPlanets() {
         Log.log("assignTasksToDockPlanets");
-        int shipsPerPlanet = 3;
+        int shipsPerPlanet = 2;
         List<Integer> updatedShipsToBeRemoved = new ArrayList<>();
 
         for (Planet freePlanet : getNearestPlanets()) {
