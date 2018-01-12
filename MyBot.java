@@ -28,8 +28,6 @@ public class MyBot {
 
         final ArrayList<Move> moveList = new ArrayList<>();
 
-
-
         for (;;) {
             moveList.clear();
             networking.updateMap(gameMap);

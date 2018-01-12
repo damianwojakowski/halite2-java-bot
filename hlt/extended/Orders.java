@@ -6,7 +6,7 @@ public class Orders {
 
     private List<SingleOrder> orders;
 
-    public boolean areOrdersForPlanet(Integer planetId) {
+    public boolean areOrdersSetForPlanet(Integer planetId) {
         final boolean[] hasOrderForPlanetId = {false};
         orders.forEach(order -> {
             if (order.hasOrderForPlanetId(planetId)) {
@@ -15,5 +15,10 @@ public class Orders {
             }
         });
         return hasOrderForPlanetId[0];
+    }
+
+    public void serOrderToDockPlanet(int planetId, int shipId) {
+        SingleOrder singleOrder = new SingleOrder();
+        singleOrder.setOrderToDockPlanet(planetId, shipId);
     }
 }

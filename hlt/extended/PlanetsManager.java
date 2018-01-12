@@ -2,6 +2,7 @@ package hlt.extended;
 
 import hlt.Planet;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,13 @@ public class PlanetsManager {
     }
 
     public boolean areMyPlanetsFull() {
-        return false;
+        int fullPlanets = 0;
+        for (Planet planet : new ArrayList<>(this.myPlanets.values())) {
+            if (planet.isFull()) {
+                fullPlanets++;
+            }
+        }
+
+        return fullPlanets == this.numberOfMyPlanets;
     }
 }
