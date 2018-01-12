@@ -54,10 +54,6 @@ public class FleetManager {
         Log.log("* ORDERS: " + orders.getOrders().toString());
         Log.log("Ships: " + allShips.values().toString());
 
-        //TODO: check if ships finished their task
-            // assign to free ships if done
-            // assign to warrior ships if no free planets
-
         if (planetsManager.areFreePlanets()) {
             assignTasksToDockPlanets();
         }
@@ -103,14 +99,14 @@ public class FleetManager {
     private void assignTasksToAttackEnemies() {
         List<Integer> updatedShipsToBeRemoved = new ArrayList<>();
         int assignedShipsCounter = 0;
-        int myShipsPerEnemy = 5;
+        int myShipsPerEnemy = 10;
 
         for (Ship enemyShip : gameMap.getAllShips()) {
             if (updatedShipsToBeRemoved.size() >= freeShipsList.size()) {
                 break;
             }
 
-            if (enemyShip.getOwner() != gameMap.getMyPlayerId()) {
+            if (enemyShip.getOwner() != gameMap.getMyPlayerId() && enemyShip.getHealth() > 0) {
                 for (Integer freeShipId : freeShipsList) {
                     if (assignedShipsCounter >= myShipsPerEnemy) {
                         break;

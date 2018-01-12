@@ -77,11 +77,11 @@ public class Orders {
             } else if (singleOrder.getOrderType() == SingleOrder.ATTACK_SHIP) {
                 boolean shipAlive = false;
                 for (Ship ship : gameMap.getAllShips()) {
-                    if (ship.getId() == singleOrder.getEnemyShipId()) {
+                    if (ship.getId() == singleOrder.getEnemyShipId() && ship.getHealth() > 0) {
                         shipAlive = true;
                     }
                 }
-                if (shipAlive == false) {
+                if (!shipAlive) {
                     singleOrder.reset();
                 }
             }
