@@ -9,7 +9,7 @@ public class MyBot {
 
     public static void main(final String[] args) {
         final Networking networking = new Networking();
-        final GameMap gameMap = networking.initialize("Damiano v1.3.0");
+        final GameMap gameMap = networking.initialize("Damiano v1.3.1");
         final FleetManager fleetManager = new FleetManager();
         final PlanetsManager planetsManager = new PlanetsManager();
         final Orders orders = new Orders();

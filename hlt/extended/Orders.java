@@ -91,6 +91,10 @@ public class Orders {
                     singleOrder.reset();
                 }
             }
+
+            if (gameMap.getShip(playerId, singleOrder.getShipId()) == null) {
+                singleOrder.reset();
+            }
         }
     }
 

@@ -123,7 +123,7 @@ public class FleetManager {
             }
         }
 
-        if (planetsToConquer.size() <= 0) {
+        if (planetsToConquer.size() == 0) {
             return;
         }
 
@@ -131,6 +131,7 @@ public class FleetManager {
 
         List<Integer> freeShipsWithNewlyAssignedJobs = new ArrayList<>();
         int shipsPerPlanetToConquerLimit = (int) Math.floor(freeShipsList.size() / planetsToConquer.size());
+        Log.log("Ships per planet to conquer: " + shipsPerPlanetToConquerLimit);
 
         for (Planet planetToConquer : planetsToConquer) {
             int shipsSetToConquerPlanet = 0;
@@ -143,8 +144,8 @@ public class FleetManager {
                 if (freeShipsList.contains(entity.getId()) && !freeShipsWithNewlyAssignedJobs.contains(entity.getId())) {
                     freeShipsWithNewlyAssignedJobs.add(entity.getId());
                     orders.setOrderToConquerPlanet(planetToConquer.getId(), entity.getId());
+                    shipsSetToConquerPlanet++;
                 }
-                shipsSetToConquerPlanet++;
             }
         }
 
@@ -240,6 +241,10 @@ public class FleetManager {
         Log.log("assignTasksToDockPlanets");
         int shipsPerPlanet = 2;
 
+        if (freeShipsList.size() > 20) {
+            shipsPerPlanet = 5;
+        }
+
         if (firstRound) {
             shipsPerPlanet = 1;
         }
@@ -285,7 +290,6 @@ public class FleetManager {
 
                     if (ship.canDock(planet)) {
                         moveList.add(new DockMove(ship, planet));
-                        singleOrder.reset();
                         break;
                     }
 
