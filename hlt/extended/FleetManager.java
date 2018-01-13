@@ -99,7 +99,7 @@ public class FleetManager {
                 assignTasksToConquerEnemyPlanets();
             }
 
-            if (freeShipsList.size() > 10) {
+            if (planetsManager.areAllPlanetsMine()) {
                 Log.log("assigning tasks to attack ships");
                 assignTasksToAttackEnemies();
             }
@@ -180,7 +180,7 @@ public class FleetManager {
     private void assignTasksToAttackEnemies() {
         List<Integer> updatedShipsToBeRemoved = new ArrayList<>();
         int assignedShipsCounter = 0;
-        int myShipsPerEnemy = 7;
+        int myShipsPerEnemy = 5;
 
         for (Ship enemyShip : gameMap.getAllShips()) {
             assignedShipsCounter = 0;
