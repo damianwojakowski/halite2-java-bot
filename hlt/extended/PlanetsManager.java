@@ -85,4 +85,22 @@ public class PlanetsManager {
     public boolean notAllMyPlanetsAreFull() {
         return !areMyPlanetsFull();
     }
+
+    public boolean areAllPlanetsOwned() {
+        for (Planet planet : new ArrayList<>(this.allPlanets.values())) {
+            if (!planet.isOwned()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean areAllPlanetsMine() {
+        for (Planet planet : new ArrayList<>(this.allPlanets.values())) {
+            if (!planet.isOwned() || planet.isOwned() && planet.getOwner() != playerId) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

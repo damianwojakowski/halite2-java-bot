@@ -58,40 +58,60 @@ public class FleetManager {
 
         for (Ship ship : ships) {
             if (!orders.areOrdersSetForShip(ship.getId())) {
-                Log.log("Add free ship: " + ship.getId());
                 freeShipsList.add(ship.getId());
             }
 
             allShips.put(ship.getId(), ship);
         }
+        Log.log("Added free ship: " + freeShipsList.size());
     }
 
     public void assignOrdersForShips() {
-        Log.log("FleetManager.assignOrdersForShips");
-        Log.log("* ORDERS: " + orders.getOrders().size());
-        Log.log("Ships: " + allShips.values().size());
+        int foreverLoopLimiter = 100;
+        int loops = 0;
+        while(freeShipsList.size() > 0) {
+            if (loops > foreverLoopLimiter) {
+                break;
+            }
 
-        if (planetsManager.areFreePlanets()) {
-            Log.log("- Free planets detected");
-            assignTasksToDockPlanets();
+            Log.log("FleetManager.assignOrdersForShips");
+            Log.log("* ORDERS: " + orders.getOrders().size());
+            Log.log("Ships: " + allShips.values().size());
+            Log.log("Free Ships: " + freeShipsList.size());
+
+            if (planetsManager.areFreePlanets()) {
+                Log.log("- Free planets detected");
+                assignTasksToDockPlanets();
+            }
+
+            if (planetsManager.notAllMyPlanetsAreFull()) {
+                Log.log("- not all of my planets are full!");
+                assignTasksToSupportYourPlanets();
+            }
+
+//        if (planetsManager.areMyPlanetsFull()) {
+//            Log.log("assigning tasks to conquer planets");
+//            assignTasksToConquerEnemyPlanets();
+//        }
+
+            if (planetsManager.areAllPlanetsOwned()) {
+                Log.log("assigning tasks to conquer planets");
+                assignTasksToConquerEnemyPlanets();
+            }
+
+            if (planetsManager.areAllPlanetsMine()) {
+                assignTasksToAttackEnemies();
+            }
+
+            loops++;
         }
 
-        if (planetsManager.notAllMyPlanetsAreFull()) {
-            Log.log("- not all of my planets are full!");
-            assignTasksToSupportYourPlanets();
-        }
-
-        if (planetsManager.areMyPlanetsFull()) {
-            Log.log("assigning tasks to conquer planets");
-            assignTasksToConquerEnemyPlanets();
-        }
     }
 
     private void assignTasksToConquerEnemyPlanets() {
-        // get list of planets (by distance)
-        // check if enemy and create another list (by distance)
-        // assign ships to conquer that planet
-
+        if (freeShipsList.size() <= 0) {
+            return;
+        }
         List<Planet> planetsToConquer = new ArrayList<>();
 
         for (Integer planetId : getSortedPlanetsAndCheckIfExist()) {
@@ -102,8 +122,15 @@ public class FleetManager {
             }
         }
 
+        if (planetsToConquer.size() <= 0) {
+            return;
+        }
+
+        Log.log("Planets to conquer: " + planetsToConquer.size());
+
         List<Integer> freeShipsWithNewlyAssignedJobs = new ArrayList<>();
-        int shipsPerPlanetToConquerLimit = 5;
+        int shipsPerPlanetToConquerLimit = (int) Math.floor(freeShipsList.size() / planetsToConquer.size());
+
         for (Planet planetToConquer : planetsToConquer) {
             int shipsSetToConquerPlanet = 0;
             Map<Double, Entity> nearestEntities = gameMap.nearbyEntitiesByDistance(planetToConquer);
@@ -119,8 +146,8 @@ public class FleetManager {
                 shipsSetToConquerPlanet++;
             }
         }
-        freeShipsList.removeAll(freeShipsWithNewlyAssignedJobs);
 
+        freeShipsList.removeAll(freeShipsWithNewlyAssignedJobs);
     }
 
     private void assignTasksToSupportYourPlanets() {
@@ -145,11 +172,7 @@ public class FleetManager {
                 }
             }
         }
-        for (Integer updatedShipId : updatedShipsToBeRemoved) {
-            if (freeShipsList.contains(updatedShipId)) {
-                freeShipsList.remove(updatedShipId);
-            }
-        }
+        freeShipsList.removeAll(updatedShipsToBeRemoved);
     }
 
     private void assignTasksToAttackEnemies() {
