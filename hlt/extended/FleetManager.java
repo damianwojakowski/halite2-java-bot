@@ -79,8 +79,45 @@ public class FleetManager {
         }
 
         if (planetsManager.areMyPlanetsFull()) {
+            assignTasksToConquerEnemyPlanets();
             assignTasksToAttackEnemies();
         }
+    }
+
+    private void assignTasksToConquerEnemyPlanets() {
+        // get list of planets (by distance)
+        // check if enemy and create another list (by distance)
+        // assign ships to conquer that planet
+
+        List<Planet> planetsToConquer = new ArrayList<>();
+
+        for (Integer planetId : getSortedPlanetsAndCheckIfExist()) {
+            Planet planet = gameMap.getPlanet(planetId);
+
+            if (planet.isOwned() && planet.getOwner() != gameMap.getMyPlayerId()) {
+                planetsToConquer.add(planet);
+            }
+        }
+
+        List<Integer> freeShipsWithNewlyAssignedJobs = new ArrayList<>();
+        int shipsPerPlanetToConquerLimit = 5;
+        for (Planet planetToConquer : planetsToConquer) {
+            int shipsSetToConquerPlanet = 0;
+            Map<Double, Entity> nearestEntities = gameMap.nearbyEntitiesByDistance(planetToConquer);
+
+            for (Entity entity : nearestEntities.values()) {
+                if (shipsSetToConquerPlanet >= shipsPerPlanetToConquerLimit) {
+                    break;
+                }
+                if (freeShipsList.contains(entity.getId()) && !freeShipsWithNewlyAssignedJobs.contains(entity.getId())) {
+                    freeShipsWithNewlyAssignedJobs.add(entity.getId());
+                    orders.setOrderToConquerPlanet(planetToConquer.getId(), entity.getId());
+                }
+                shipsSetToConquerPlanet++;
+            }
+        }
+        freeShipsList.removeAll(freeShipsWithNewlyAssignedJobs);
+
     }
 
     private void assignTasksToSupportYourPlanets() {
@@ -217,6 +254,7 @@ public class FleetManager {
 
                     if (planet.isFull()) {
                         singleOrder.reset();
+                        break;
                     }
 
                     if (ship.canDock(planet)) {
@@ -233,10 +271,43 @@ public class FleetManager {
                     Ship attackingShip = allShips.get(singleOrder.getShipId());
                     Ship enemyShip = allShipsWithEnemyShips.get(singleOrder.getEnemyShipId());
 
+                    if (enemyShip == null || enemyShip.getHealth() <= 0) {
+                        singleOrder.reset();
+                        break;
+                    }
+
                     final ThrustMove attackMove = Navigation.navigateShipToDock(gameMap, attackingShip, enemyShip, Constants.MAX_SPEED);
                     if (attackMove != null) {
                         moveList.add(attackMove);
                     }
+                    break;
+                case SingleOrder.CONQUER_PLANET:
+                    Ship myFreeShip = allShips.get(singleOrder.getShipId());
+                    Planet planetToConquer = planetsManager.getPlanetById(singleOrder.getPlanetId());
+                    if (planetToConquer.getDockedShips().size() > 0) {
+                        Ship firstDockedEnemyShip = allShipsWithEnemyShips.get(planetToConquer.getDockedShips().get(0));
+
+                        final ThrustMove attackDockedShipMove = Navigation.navigateShipToDock(gameMap, myFreeShip, firstDockedEnemyShip, Constants.MAX_SPEED);
+                        if (attackDockedShipMove != null) {
+                            moveList.add(attackDockedShipMove);
+                        }
+                    } else {
+                        if (planetToConquer.isFull()) {
+                            singleOrder.reset();
+                            break;
+                        }
+
+                        if (myFreeShip.canDock(planetToConquer)) {
+                            moveList.add(new DockMove(myFreeShip, planetToConquer));
+                            break;
+                        }
+
+                        final ThrustMove conquerAndDockMove = Navigation.navigateShipToDock(gameMap, myFreeShip, planetToConquer, Constants.MAX_SPEED);
+                        if (conquerAndDockMove != null) {
+                            moveList.add(conquerAndDockMove);
+                        }
+                    }
+
                     break;
             }
         }

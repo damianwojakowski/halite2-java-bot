@@ -93,4 +93,10 @@ public class Orders {
         singleOrder.setOrderToAttackEnemyShip(enemyShipId, freeShipId);
         orders.add(singleOrder);
     }
+
+    public void setOrderToConquerPlanet(int planetId, int freeShipId) {
+        SingleOrder singleOrder = new SingleOrder();
+        singleOrder.setOrderToConquerPlanet(planetId, freeShipId);
+        orders.add(singleOrder);
+    }
 }

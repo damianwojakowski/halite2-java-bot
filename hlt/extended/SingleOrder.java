@@ -5,6 +5,7 @@ public class SingleOrder {
     final static public int TO_BE_REMOVED = -1;
     final static public int DOCK_PLANET = 0;
     final static public int ATTACK_SHIP = 1;
+    final static public int CONQUER_PLANET = 2;
 
     private int planetId;
     private int shipId;
@@ -45,5 +46,11 @@ public class SingleOrder {
         this.enemyShipId = enemyShipId;
         this.shipId = freeShipId;
         this.orderType = ATTACK_SHIP;
+    }
+
+    public void setOrderToConquerPlanet(int planetId, int freeShipId) {
+        this.planetId = planetId;
+        this.shipId = freeShipId;
+        this.orderType = CONQUER_PLANET;
     }
 }
