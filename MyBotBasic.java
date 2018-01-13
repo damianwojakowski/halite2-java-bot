@@ -1,49 +1,50 @@
 import hlt.*;
+import hlt.extended.FleetManager;
+import hlt.extended.Orders;
+import hlt.extended.PlanetsManager;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class MyBotBasic {
 
     public static void main(final String[] args) {
         final Networking networking = new Networking();
-        final GameMap gameMap = networking.initialize("Tamagocchi");
+        final GameMap gameMap = networking.initialize("Damiano v1.2.0");
+        final FleetManager fleetManager = new FleetManager();
+        final PlanetsManager planetsManager = new PlanetsManager();
+        final Orders orders = new Orders();
 
-        // We now have 1 full minute to analyse the initial map.
+        orders.setPlanetsManager(planetsManager);
+        orders.setPlayerId(gameMap.getMyPlayerId());
+        orders.setGameMap(gameMap);
+
+        planetsManager.setPlayerId(gameMap.getMyPlayerId());
+
+        fleetManager.setPlanetsManager(planetsManager);
+        fleetManager.setOrders(orders);
+        fleetManager.setGameMap(gameMap);
+
         final String initialMapIntelligence =
                 "width: " + gameMap.getWidth() +
-                "; height: " + gameMap.getHeight() +
-                "; players: " + gameMap.getAllPlayers().size() +
-                "; planets: " + gameMap.getAllPlanets().size();
+                        "; height: " + gameMap.getHeight() +
+                        "; players: " + gameMap.getAllPlayers().size() +
+                        "; planets: " + gameMap.getAllPlanets().size();
         Log.log(initialMapIntelligence);
 
-        final ArrayList<Move> moveList = new ArrayList<>();
         for (;;) {
-            moveList.clear();
             networking.updateMap(gameMap);
 
-            for (final Ship ship : gameMap.getMyPlayer().getShips().values()) {
-                if (ship.getDockingStatus() != Ship.DockingStatus.Undocked) {
-                    continue;
-                }
+            List<Planet> planets = new ArrayList<>(gameMap.getAllPlanets().values());
+            planetsManager.updatePlanetsStatus(planets);
 
-                for (final Planet planet : gameMap.getAllPlanets().values()) {
-                    if (planet.isOwned()) {
-                        continue;
-                    }
+            List<Ship> allShips = new ArrayList<>(gameMap.getAllShips());
+            fleetManager.setAllShipsWithEnemyShips(allShips);
 
-                    if (ship.canDock(planet)) {
-                        moveList.add(new DockMove(ship, planet));
-                        break;
-                    }
+            List<Ship> myShips = new ArrayList<>(gameMap.getMyPlayer().getShips().values());
+            fleetManager.checkShipAndAddToNewShipsIfNotRegistered(myShips);
+            fleetManager.assignOrdersForShips();
+            ArrayList<Move> moveList = fleetManager.generateMoveList();
 
-                    final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
-                    if (newThrustMove != null) {
-                        moveList.add(newThrustMove);
-                    }
-
-                    break;
-                }
-            }
             Networking.sendMoves(moveList);
         }
     }
