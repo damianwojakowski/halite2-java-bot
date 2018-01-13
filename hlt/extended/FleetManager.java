@@ -19,6 +19,7 @@ public class FleetManager {
     private Map<Integer, Ship> dockingShips = new HashMap<>();
     private Map<Integer, Ship> warriorShips = new HashMap<>();
     private Map<Integer, Ship> freeShip = new HashMap<>();
+    private boolean firstRound = true;
 
     private List<Integer> freeShipsList = new ArrayList<>();
     private List<Integer> dockingShipsList = new ArrayList<>();
@@ -174,6 +175,11 @@ public class FleetManager {
     private void assignTasksToDockPlanets() {
         Log.log("assignTasksToDockPlanets");
         int shipsPerPlanet = 2;
+
+        if (firstRound) {
+            shipsPerPlanet = 1;
+        }
+
         List<Integer> updatedShipsToBeRemoved = new ArrayList<>();
 
         for (Planet freePlanet : getNearestPlanets()) {
