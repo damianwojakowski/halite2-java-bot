@@ -67,18 +67,22 @@ public class FleetManager {
     }
 
     public void assignOrdersForShips() {
-        Log.log("* ORDERS: " + orders.getOrders().toString());
-        Log.log("Ships: " + allShips.values().toString());
+        Log.log("FleetManager.assignOrdersForShips");
+        Log.log("* ORDERS: " + orders.getOrders().size());
+        Log.log("Ships: " + allShips.values().size());
 
         if (planetsManager.areFreePlanets()) {
+            Log.log("- Free planets detected");
             assignTasksToDockPlanets();
         }
 
         if (planetsManager.notAllMyPlanetsAreFull()) {
+            Log.log("- not all of my planets are full!");
             assignTasksToSupportYourPlanets();
         }
 
         if (planetsManager.areMyPlanetsFull()) {
+            Log.log("assigning tasks to conquer planets");
             assignTasksToConquerEnemyPlanets();
         }
     }
@@ -240,7 +244,6 @@ public class FleetManager {
 
     public ArrayList<Move> generateMoveList() {
         moveList.clear();
-        Log.log(moveList.toString());
 
         this.orders.validateOrders();
         this.orders.removeCompletedOrders();
@@ -258,6 +261,7 @@ public class FleetManager {
 
                     if (ship.canDock(planet)) {
                         moveList.add(new DockMove(ship, planet));
+                        singleOrder.reset();
                         break;
                     }
 
@@ -291,11 +295,6 @@ public class FleetManager {
                             moveList.add(attackDockedShipMove);
                         }
                     } else {
-                        if (planetToConquer.isFull()) {
-                            singleOrder.reset();
-                            break;
-                        }
-
                         if (myFreeShip.canDock(planetToConquer)) {
                             moveList.add(new DockMove(myFreeShip, planetToConquer));
                             break;

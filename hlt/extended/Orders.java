@@ -4,6 +4,7 @@ import hlt.GameMap;
 import hlt.Planet;
 import hlt.Ship;
 
+import javax.net.ssl.SNIHostName;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +83,11 @@ public class Orders {
                     }
                 }
                 if (!shipAlive) {
+                    singleOrder.reset();
+                }
+            } else if (singleOrder.getOrderType() == SingleOrder.CONQUER_PLANET) {
+                Planet planet = planetsManager.getPlanetById(singleOrder.getPlanetId());
+                if (planet == null || planet.getOwner() == playerId && planet.isFull()) {
                     singleOrder.reset();
                 }
             }
