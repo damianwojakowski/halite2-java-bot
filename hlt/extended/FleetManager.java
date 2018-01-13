@@ -80,7 +80,6 @@ public class FleetManager {
 
         if (planetsManager.areMyPlanetsFull()) {
             assignTasksToConquerEnemyPlanets();
-            assignTasksToAttackEnemies();
         }
     }
 
