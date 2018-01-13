@@ -99,7 +99,8 @@ public class FleetManager {
                 assignTasksToConquerEnemyPlanets();
             }
 
-            if (planetsManager.areAllPlanetsMine()) {
+            if (freeShipsList.size() > 10) {
+                Log.log("assigning tasks to attack ships");
                 assignTasksToAttackEnemies();
             }
 
