@@ -24,6 +24,20 @@ public class FleetManager {
     private List<Integer> dockingShipsList = new ArrayList<>();
     private List<Integer> sortedPlanetsList = new ArrayList<>();
 
+    private List<Integer> getSortedPlanetsAndCheckIfExist() {
+        List<Integer> planetsNotExistingAnymore = new ArrayList<>();
+
+        for (Integer planetId : sortedPlanetsList) {
+            if (gameMap.getPlanet(planetId) == null) {
+                planetsNotExistingAnymore.add(planetId);
+            }
+        }
+
+        sortedPlanetsList.removeAll(planetsNotExistingAnymore);
+
+        return sortedPlanetsList;
+    }
+
     public void setPlanetsManager(PlanetsManager planetsManager) {
         this.planetsManager = planetsManager;
     }
@@ -129,7 +143,7 @@ public class FleetManager {
 
     List<Integer> getSortedPlanetsOrder(Map<Integer, Planet> planets) {
         if (sortedPlanetsList.size() > 0) {
-            return sortedPlanetsList;
+            return getSortedPlanetsAndCheckIfExist();
         } else {
             List<Integer> sortedPlanets = new ArrayList<>();
             Ship firstFreeShip = allShips.get(freeShipsList.get(0));
@@ -147,9 +161,9 @@ public class FleetManager {
     private List<Planet> getNearestPlanets() {
         Map<Integer, Planet> planets = planetsManager.getFreePlanets();
         List<Planet> sortedPlanets = new ArrayList<>();
-        List<Integer> sortedPlanetsList = getSortedPlanetsOrder(planets);
+        List<Integer> sortedPlanetsIds = getSortedPlanetsOrder(planets);
 
-        for (Integer planetId : sortedPlanetsList) {
+        for (Integer planetId : sortedPlanetsIds) {
             sortedPlanets.add(gameMap.getPlanet(planetId));
         }
 
@@ -186,6 +200,9 @@ public class FleetManager {
         moveList.clear();
         Log.log(moveList.toString());
 
+        this.orders.validateOrders();
+        this.orders.removeCompletedOrders();
+
         for (SingleOrder singleOrder : this.orders.getOrders()) {
             switch (singleOrder.getOrderType()) {
                 case SingleOrder.DOCK_PLANET:
@@ -217,9 +234,6 @@ public class FleetManager {
                     break;
             }
         }
-
-        this.orders.validateOrders();
-        this.orders.removeCompletedOrders();
 
         return moveList;
     }

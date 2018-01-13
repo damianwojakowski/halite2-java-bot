@@ -71,7 +71,7 @@ public class Orders {
         for (SingleOrder singleOrder : orders) {
             if (singleOrder.getOrderType() == SingleOrder.DOCK_PLANET) {
                 Planet planet = planetsManager.getPlanetById(singleOrder.getPlanetId());
-                if (planet.isOwned() && planet.getOwner() != playerId) {
+                if (planet == null || planet.isOwned() && planet.getOwner() != playerId) {
                     singleOrder.reset();
                 }
             } else if (singleOrder.getOrderType() == SingleOrder.ATTACK_SHIP) {
