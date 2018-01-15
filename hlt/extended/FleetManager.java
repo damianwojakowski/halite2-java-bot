@@ -6,6 +6,7 @@ import java.util.*;
 
 public class FleetManager {
     final ArrayList<Move> moveList = new ArrayList<>();
+    int roundNumber = 1;
 
     private GameMap gameMap;
     private Orders orders;
@@ -86,10 +87,10 @@ public class FleetManager {
                 assignTasksToSupportYourPlanets();
             }
 
-//        if (planetsManager.areMyPlanetsFull()) {
-//            Log.log("assigning tasks to conquer planets");
-//            assignTasksToConquerEnemyPlanets();
-//        }
+            if (planetsManager.areMyPlanetsFull()) {
+                Log.log("my planets full - assigning tasks to conquer planets");
+                assignTasksToConquerEnemyPlanets();
+            }
 
             if (planetsManager.areAllPlanetsOwned()) {
                 Log.log("assigning tasks to conquer planets");
@@ -103,6 +104,7 @@ public class FleetManager {
 
             loops++;
         }
+        roundNumber++;
 
     }
 
@@ -309,7 +311,12 @@ public class FleetManager {
                         break;
                     }
 
-                    final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
+                    int speed = Constants.MAX_SPEED;
+                    if (roundNumber < 3) {
+                        speed = Constants.MAX_SPEED / 2;
+                    }
+
+                    final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap, ship, planet, speed);
                     if (newThrustMove != null) {
                         moveList.add(newThrustMove);
                     }
