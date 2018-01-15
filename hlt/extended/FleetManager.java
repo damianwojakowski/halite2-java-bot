@@ -87,10 +87,10 @@ public class FleetManager {
                 assignTasksToSupportYourPlanets();
             }
 
-//            if (planetsManager.areMyPlanetsFull()) {
-//                Log.log("my planets full - assigning tasks to conquer planets");
-//                assignTasksToConquerEnemyPlanets();
-//            }
+            if (planetsManager.areMyPlanetsFull()) {
+                Log.log("my planets full - assigning tasks to conquer planets");
+                assignTasksToConquerEnemyPlanets();
+            }
 
             if (planetsManager.areAllPlanetsOwned()) {
                 Log.log("assigning tasks to conquer planets");
