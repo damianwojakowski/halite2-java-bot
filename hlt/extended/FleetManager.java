@@ -108,7 +108,8 @@ public class FleetManager {
 
     private void assignTasksToConquerEnemyPlanets() {
         if (freeShipsList.size() <= 0) {
-            return;        }
+            return;
+        }
         List<Planet> planetsToConquer = new ArrayList<>();
 
         for (Integer planetId : getSortedPlanetsAndCheckIfExist()) {
