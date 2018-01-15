@@ -2,10 +2,7 @@ package hlt.extended;
 
 import hlt.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FleetManager {
     final ArrayList<Move> moveList = new ArrayList<>();
@@ -111,8 +108,7 @@ public class FleetManager {
 
     private void assignTasksToConquerEnemyPlanets() {
         if (freeShipsList.size() <= 0) {
-            return;
-        }
+            return;        }
         List<Planet> planetsToConquer = new ArrayList<>();
 
         for (Integer planetId : getSortedPlanetsAndCheckIfExist()) {
@@ -213,13 +209,31 @@ public class FleetManager {
         } else {
             List<Integer> sortedPlanets = new ArrayList<>();
             Ship firstFreeShip = allShips.get(freeShipsList.get(0));
-            Map<Double, Entity> closestEntities = gameMap.nearbyEntitiesByDistance(firstFreeShip);
 
-            for (Entity entity : closestEntities.values()) {
-                if (planets.containsKey(entity.getId())) {
-                    sortedPlanetsList.add(entity.getId());
-                }
+            double xPosOfShip = firstFreeShip.getXPos();
+            double yPosOfShip = firstFreeShip.getYPos();
+
+            Map<Double, Planet> closestEntities = new HashMap<>();
+            for (Planet planet: planets.values()) {
+                double xPos = planet.getXPos();
+                double yPos = planet.getYPos();
+
+                double xDifference = Math.abs(xPosOfShip - xPos);
+                double yDifference = Math.abs(yPosOfShip - yPos);
+
+                double distance = xDifference + yDifference;
+
+                closestEntities.put(distance, planet);
             }
+
+            List<Double> sortedPlanetsByDistance = new ArrayList<>(closestEntities.keySet());
+            Collections.sort(sortedPlanetsByDistance);
+            Log.log("Planets by distance: " + sortedPlanetsByDistance.toString());
+
+            for (Double distanceToPlanet : sortedPlanetsByDistance) {
+                sortedPlanetsList.add(closestEntities.get(distanceToPlanet).getId());
+            }
+
             return sortedPlanetsList;
         }
     }
