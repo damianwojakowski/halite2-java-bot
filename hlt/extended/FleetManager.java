@@ -130,7 +130,7 @@ public class FleetManager {
         Log.log("Planets to conquer: " + planetsToConquer.size());
 
         List<Integer> freeShipsWithNewlyAssignedJobs = new ArrayList<>();
-        int shipsPerPlanetToConquerLimit = (int) Math.floor(freeShipsList.size() / planetsToConquer.size());
+        int shipsPerPlanetToConquerLimit = 5;
         Log.log("Ships per planet to conquer: " + shipsPerPlanetToConquerLimit);
 
         for (Planet planetToConquer : planetsToConquer) {
@@ -180,7 +180,7 @@ public class FleetManager {
     private void assignTasksToAttackEnemies() {
         List<Integer> updatedShipsToBeRemoved = new ArrayList<>();
         int assignedShipsCounter = 0;
-        int myShipsPerEnemy = 5;
+        int myShipsPerEnemy = 3;
 
         for (Ship enemyShip : gameMap.getAllShips()) {
             assignedShipsCounter = 0;
