@@ -87,10 +87,10 @@ public class FleetManager {
                 assignTasksToSupportYourPlanets();
             }
 
-            if (planetsManager.areMyPlanetsFull()) {
-                Log.log("my planets full - assigning tasks to conquer planets");
-                assignTasksToConquerEnemyPlanets();
-            }
+//            if (planetsManager.areMyPlanetsFull()) {
+//                Log.log("my planets full - assigning tasks to conquer planets");
+//                assignTasksToConquerEnemyPlanets();
+//            }
 
             if (planetsManager.areAllPlanetsOwned()) {
                 Log.log("assigning tasks to conquer planets");
@@ -312,7 +312,7 @@ public class FleetManager {
                     }
 
                     int speed = Constants.MAX_SPEED;
-                    if (roundNumber < 3) {
+                    if (roundNumber < 5) {
                         speed = Constants.MAX_SPEED / 2;
                     }
 
