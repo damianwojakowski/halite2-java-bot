@@ -110,6 +110,7 @@ public class FleetManager {
         if (freeShipsList.size() <= 0) {
             return;
         }
+
         List<Planet> planetsToConquer = new ArrayList<>();
 
         for (Integer planetId : getSortedPlanetsAndCheckIfExist()) {
